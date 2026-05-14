@@ -18,14 +18,12 @@ public class UserResponse {
 
     private String email;
 
-    private String passwordHash;
-
+    // passwordHash ELIMINADO — nunca devolver al cliente
     private String telefono;
 
     private LocalDate fechaRegistro;
 
-    private boolean activo;
+    private Boolean activo;
 
-    private double presupuestoMensual;
-
+    private Double presupuestoMensual;
 }

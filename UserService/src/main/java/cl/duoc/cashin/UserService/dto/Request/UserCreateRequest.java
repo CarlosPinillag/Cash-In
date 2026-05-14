@@ -1,8 +1,12 @@
 package cl.duoc.cashin.UserService.dto.Request;
 
+import jakarta.validation.constraints.DecimalMax;
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -13,25 +17,28 @@ import lombok.NoArgsConstructor;
 
 public class UserCreateRequest {
 
-    @NotBlank(message = "EL NOMBRE ES OBLIGATORRIO")
-    @Size(min = 4, max = 20, message = "EL NOMBRE DEBE TENER MINIMO 4 CARATERES Y MAXIMO 20")
+    @NotBlank(message = "EL NOMBRE ES OBLIGATORIO")
+    @Size(min = 4, max = 20, message = "EL NOMBRE DEBE TENER MINIMO 4 Y MAXIMO 20 CARACTERES")
     private String nombre;
 
-    @NotBlank(message = "EL EMAIL ES OBLIGATORRIO")
-    @Size(min = 9, max = 100, message = "EL EMAIL DEBE TENER MINIMO 9 CARATERES Y MAXIMO 100")
+    @NotBlank(message = "EL EMAIL ES OBLIGATORIO")
+    @Email(message = "FORMATO DE EMAIL INVALIDO") // ← agregar para validar formato
+    @Size(min = 9, max = 100, message = "EL EMAIL DEBE TENER MINIMO 9 Y MAXIMO 100 CARACTERES")
     private String email;
 
-    @NotBlank(message = "EL PASSWORD ES OBLIGATORRIO")
-    @Size(min = 6, max = 10, message = "EL PASSWORD DEBE TENER MINIMO 6 CARATERES Y MAXIMO 10")
-    private String passwordHash;
+    @NotBlank(message = "EL PASSWORD ES OBLIGATORIO")
+    @Size(min = 6, max = 10, message = "EL PASSWORD DEBE TENER MINIMO 6 Y MAXIMO 10 CARACTERES")
+    private String password;
 
-    @NotBlank(message = "EL TELEFONO ES OBLIGATORRIO")
-    @Size(min = 11, message = "EL TELEFONO DEBE TENER 11 DIGITOS ")
+    @NotBlank(message = "EL TELEFONO ES OBLIGATORIO")
+    @Size(min = 9, max = 15, message = "EL TELEFONO DEBE TENER ENTRE 9 Y 15 DIGITOS")
+    @Pattern(regexp = "^[0-9]+$", message = "EL TELEFONO SOLO DEBE CONTENER NUMEROS")
     private String telefono;
 
-    @NotBlank(message = "EL PRESUPUESTO INICIAL ES OBLIGATORRIO")
-    @Size(max = 100000000, message = "EL MONTO MAXIMO DEBE SER 100.000.000 ")
-    @Positive(message = "LA CANTIDAD TIENE QUE SER MAYOR A 0")
-    private double presupuestoMensual;
-
+    // ✔ CORREGIDO: Double objeto + @NotNull + @Positive + @DecimalMax
+    // Se eliminaron @NotBlank y @Size que no aplican a números
+    @NotNull(message = "EL PRESUPUESTO ES OBLIGATORIO")
+    @Positive(message = "EL PRESUPUESTO DEBE SER MAYOR A 0")
+    @DecimalMax(value = "100000000", message = "EL MONTO MAXIMO ES 100.000.000")
+    private Double presupuestoMensual;
 }

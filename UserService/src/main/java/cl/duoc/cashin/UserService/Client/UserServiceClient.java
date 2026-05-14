@@ -4,26 +4,29 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import cl.duoc.cashin.UserService.dto.Response.UserResponse;
-import cl.duoc.cashin.UserService.exception.ResourceNotFoundException;
+import cl.duoc.cashin.UserService.Exception.ResourceNotFoundException;
+//                                         ^ 'Exception' con E mayúscula
+//                                           debe coincidir con el nombre real de la carpeta
 import lombok.RequiredArgsConstructor;
 import reactor.core.publisher.Mono;
 
-@Component // Le dice a Spring: "Esta clase es un bean, créala automáticamente y
-           // adminístrala
-@RequiredArgsConstructor // Lombok genera automáticamente un constructor con los atributos final
+@Component
+@RequiredArgsConstructor
 public class UserServiceClient {
 
     private final WebClient webcliente;
 
     public UserResponse obtenerUserPorId(Long id) {
-        return webcliente.get() // Indica que la petición HTTP es tipo GET (puede ser post, put, etc...)
-                .uri("/api/v1/fiestas/{id}", id) // Construye la URL
-                .retrieve() // Ejecuta la petición HTTP
+        return webcliente.get()
+                .uri("/api/v1/users/{id}", id)
+                // ^ CORREGIDO: era /api/v1/fiestas/{id}
+                // debe apuntar al endpoint real del servicio
+                .retrieve()
                 .onStatus(
                         status -> status.value() == 404,
-                        reponse -> Mono.error(new ResourceNotFoundException("Id del Usuario no existe")))
-                .bodyToMono(UserResponse.class) // Convierte el JSON de respuesta en un objeto Java
-                .block(); // Convierte el flujo reactivo en bloqueante osea Espera la respuesta
+                        response -> Mono.error(
+                                new ResourceNotFoundException("Usuario con id " + id + " no existe")))
+                .bodyToMono(UserResponse.class)
+                .block();
     }
-
 }
