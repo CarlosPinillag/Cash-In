@@ -68,6 +68,21 @@ public class UserService {
         return mapToResponse(guardado);
     }
 
+    // OBTENER POR EMAIL
+    public UserResponse obtenerPorEmail(String email) {
+        UserModel modelo = userRepository.findByEmail(email)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Usuario con email " + email + " no encontrado"));
+        return mapToResponse(modelo);
+    }
+
+    // OBTENER HASH POR EMAIL
+    public UserModel obtenerModeloPorEmail(String email) {
+        return userRepository.findByEmail(email)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Usuario con email " + email + " no encontrado"));
+    }
+
     // ── OBTENER POR ID ───────────────────────────────────────────────
     public UserResponse obtenerPorId(Long id) {
         log.info("Buscando usuario id: {}", id);

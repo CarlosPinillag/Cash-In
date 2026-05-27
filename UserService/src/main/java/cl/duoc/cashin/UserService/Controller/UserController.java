@@ -5,7 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-
+import cl.duoc.cashin.UserService.Model.UserModel;
 import cl.duoc.cashin.UserService.Service.UserService;
 import cl.duoc.cashin.UserService.dto.Request.UserCreateRequest;
 import cl.duoc.cashin.UserService.dto.Request.UserUpdateRequest;
@@ -28,6 +28,19 @@ public class UserController {
         // @Valid activa las validaciones del DTO antes de entrar al método
         // @RequestBody lee el JSON del body de la petición HTTP
         return ResponseEntity.ok(userService.crearUsuario(request));
+    }
+
+    // GET /api/v1/users/email/{email} — Obtener por email
+    @GetMapping("/email/{email}")
+    public ResponseEntity<UserResponse> obtenerPorEmail(@PathVariable String email) {
+        return ResponseEntity.ok(userService.obtenerPorEmail(email));
+    }
+
+    // GET /api/v1/users/internal/email/{email} — Uso INTERNO entre microservicios
+    // Devuelve passwordHash — NO exponer públicamente
+    @GetMapping("/internal/email/{email}")
+    public ResponseEntity<UserModel> obtenerModeloPorEmail(@PathVariable String email) {
+        return ResponseEntity.ok(userService.obtenerModeloPorEmail(email));
     }
 
     // GET /api/v1/users/{id} — Obtener por ID
