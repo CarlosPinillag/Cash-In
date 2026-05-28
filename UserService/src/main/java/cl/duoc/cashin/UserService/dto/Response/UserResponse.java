@@ -18,7 +18,6 @@ public class UserResponse {
 
     private String email;
 
-    // passwordHash ELIMINADO — nunca devolver al cliente
     private String telefono;
 
     private LocalDate fechaRegistro;

@@ -14,13 +14,9 @@ import cl.duoc.cashin.UserService.dto.DtoApiError;
 import jakarta.servlet.http.HttpServletRequest;
 
 @RestControllerAdvice
-// Intercepta todas las excepciones lanzadas en cualquier @RestController
-// Sin esto, Spring retorna un JSON genérico con HTTP 500 siempre
 
 public class GlobalExceptionHandler {
 
-    // ── Errores de validación @Valid ─────────────────────────────────
-    // Se activa cuando un campo del Request no pasa @NotBlank, @Positive, etc.
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Map<String, String>> handleValidation(
             MethodArgumentNotValidException ex) {
@@ -29,14 +25,12 @@ public class GlobalExceptionHandler {
         ex.getBindingResult()
                 .getFieldErrors()
                 .forEach(error -> errores.put(
-                        error.getField(), // "nombre", "email", etc.
-                        error.getDefaultMessage() // mensaje del @NotBlank
-                ));
+                        error.getField(),
+                        error.getDefaultMessage()));
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errores); // 400
     }
 
-    // ── ResourceNotFoundException → HTTP 404 ─────────────────────────
     @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity<DtoApiError> handleNotFound(
             ResourceNotFoundException ex, HttpServletRequest request) {
@@ -53,8 +47,6 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
     }
 
-    // ── RuntimeException (reglas de negocio) → HTTP 409 ─────────────
-    // Se activa con: throw new RuntimeException("email ya existe")
     @ExceptionHandler(RuntimeException.class)
     public ResponseEntity<String> handleRuntime(RuntimeException ex) {
         return ResponseEntity.status(HttpStatus.CONFLICT).body(ex.getMessage()); // 409

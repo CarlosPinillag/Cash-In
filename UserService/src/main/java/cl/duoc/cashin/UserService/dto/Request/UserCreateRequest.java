@@ -35,8 +35,6 @@ public class UserCreateRequest {
     @Pattern(regexp = "^[0-9]+$", message = "EL TELEFONO SOLO DEBE CONTENER NUMEROS")
     private String telefono;
 
-    // ✔ CORREGIDO: Double objeto + @NotNull + @Positive + @DecimalMax
-    // Se eliminaron @NotBlank y @Size que no aplican a números
     @NotNull(message = "EL PRESUPUESTO ES OBLIGATORIO")
     @Positive(message = "EL PRESUPUESTO DEBE SER MAYOR A 0")
     @DecimalMax(value = "100000000", message = "EL MONTO MAXIMO ES 100.000.000")

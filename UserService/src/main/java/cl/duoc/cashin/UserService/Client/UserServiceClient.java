@@ -19,8 +19,7 @@ public class UserServiceClient {
     public UserResponse obtenerUserPorId(Long id) {
         return webcliente.get()
                 .uri("/api/v1/users/{id}", id)
-                // ^ CORREGIDO: era /api/v1/fiestas/{id}
-                // debe apuntar al endpoint real del servicio
+
                 .retrieve()
                 .onStatus(
                         status -> status.value() == 404,

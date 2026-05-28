@@ -16,18 +16,14 @@ import cl.duoc.cashin.UserService.dto.Request.UserUpdateRequest;
 import cl.duoc.cashin.UserService.dto.Response.UserResponse;
 import lombok.RequiredArgsConstructor;
 
-@Service // registra esta clase como Bean de lógica de negocio
-@RequiredArgsConstructor // Lombok genera constructor con los atributos 'final'
+@Service
+@RequiredArgsConstructor
 
 public class UserService {
 
-    // Logger SLF4J — siempre usar esto, NUNCA System.out.println
     private static final Logger log = LoggerFactory.getLogger(UserService.class);
     private final UserRepository userRepository;
 
-    // ── MAPPER privado: UserModel → UserResponse ────────────────────
-    // Convierte la entidad JPA en el DTO que se devuelve al cliente
-    // Es privado porque solo el service lo usa
     private UserResponse mapToResponse(UserModel model) {
         UserResponse response = new UserResponse();
         response.setIdUser(model.getIdUser());
@@ -37,30 +33,28 @@ public class UserService {
         response.setFechaRegistro(model.getFechaRegistro());
         response.setActivo(model.getActivo());
         response.setPresupuestoMensual(model.getPresupuestoMensual());
-        // passwordHash NO se mapea — nunca se devuelve al cliente
+
         return response;
     }
 
-    // ── CREAR ───────────────────────────────────────────────────────
+    // CREAR
     public UserResponse crearUsuario(UserCreateRequest request) {
         log.info("Creando usuario con email: {}", request.getEmail());
 
-        // Regla de negocio: el email debe ser único en el sistema
         if (userRepository.existsByEmail(request.getEmail())) {
             throw new RuntimeException(
                     "Ya existe un usuario con el email: " + request.getEmail());
-            // GlobalExceptionHandler captura RuntimeException → HTTP 409
+
         }
 
         UserModel model = new UserModel();
         model.setNombre(request.getNombre());
         model.setEmail(request.getEmail());
         model.setPasswordHash(request.getPassword());
-        // En producción real usar BCryptPasswordEncoder:
-        // model.setPasswordHash(encoder.encode(request.getPasswordHash()));
+
         model.setTelefono(request.getTelefono());
-        model.setFechaRegistro(LocalDate.now()); // fecha actual automática
-        model.setActivo(true); // siempre activo al crear
+        model.setFechaRegistro(LocalDate.now());
+        model.setActivo(true);
         model.setPresupuestoMensual(request.getPresupuestoMensual());
 
         UserModel guardado = userRepository.save(model);
@@ -83,31 +77,26 @@ public class UserService {
                         "Usuario con email " + email + " no encontrado"));
     }
 
-    // ── OBTENER POR ID ───────────────────────────────────────────────
+    // OBTENER POR ID
     public UserResponse obtenerPorId(Long id) {
         log.info("Buscando usuario id: {}", id);
 
         UserModel model = userRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException(
                         "Usuario con id " + id + " no encontrado"));
-        // findById retorna Optional<UserModel>
-        // orElseThrow: si el Optional está vacío, lanza la excepción
-        // GlobalExceptionHandler la captura → HTTP 404
 
         return mapToResponse(model);
     }
 
-    // ── LISTAR TODOS ACTIVOS ─────────────────────────────────────────
     public List<UserResponse> listarTodos() {
         log.info("Listando todos los usuarios activos");
 
-        return userRepository.findByActivoTrue() // solo activos
-                .stream() // convierte List en Stream
-                .map(this::mapToResponse) // aplica mapToResponse a cada elemento
-                .collect(Collectors.toList()); // vuelve a convertir en List
+        return userRepository.findByActivoTrue()
+                .stream()
+                .map(this::mapToResponse)
+                .collect(Collectors.toList());
     }
 
-    // ── ACTUALIZAR ───────────────────────────────────────────────────
     public UserResponse actualizar(Long id, UserUpdateRequest request) {
 
         log.info("Actualizando usuario id: {}", id);
@@ -116,10 +105,8 @@ public class UserService {
                 .orElseThrow(() -> new ResourceNotFoundException(
                         "Usuario con id " + id + " no encontrado"));
 
-        // ── VALIDAR EMAIL SOLO SI VIENE EN EL REQUEST ───────────────────
         if (request.getEmail() != null) {
 
-            // verificar si el nuevo email ya pertenece a otro usuario
             if (!model.getEmail().equals(request.getEmail()) &&
                     userRepository.existsByEmail(request.getEmail())) {
 
@@ -130,7 +117,7 @@ public class UserService {
             model.setEmail(request.getEmail());
         }
 
-        // ── ACTUALIZAR SOLO CAMPOS NO NULL ──────────────────────────────
+        // ACTUALIZAR SOLO CAMPOS NO NULL
 
         if (request.getNombre() != null) {
             model.setNombre(request.getNombre());
@@ -139,8 +126,6 @@ public class UserService {
         if (request.getPassword() != null) {
             model.setPasswordHash(request.getPassword());
 
-            // en producción:
-            // model.setPasswordHash(encoder.encode(request.getPassword()));
         }
 
         if (request.getTelefono() != null) {
@@ -158,9 +143,6 @@ public class UserService {
         return mapToResponse(actualizado);
     }
 
-    // ── ELIMINAR (soft delete) ───────────────────────────────────────
-    // No se borra el registro. Se pone activo=false.
-    // Así se conserva el historial de gastos e ingresos del usuario.
     public void eliminar(Long id) {
         log.info("Desactivando usuario id: {}", id);
 
