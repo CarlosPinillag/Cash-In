@@ -10,12 +10,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class AuthTokenResponse {
 
-    // Token generado para esta sesion
     private String token;
 
-    // Email del usuario autenticado
     private String username;
 
-    // Momento exacto en que expira el token
     private LocalDateTime expiresAt;
 }
