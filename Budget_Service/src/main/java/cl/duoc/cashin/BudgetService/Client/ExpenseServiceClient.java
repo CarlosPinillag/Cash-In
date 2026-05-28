@@ -1,0 +1,43 @@
+package cl.duoc.cashin.BudgetService.Client;
+
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Component;
+import org.springframework.web.reactive.function.client.WebClient;
+
+import cl.duoc.cashin.BudgetService.Exception.ResourceNotFoundException;
+import reactor.core.publisher.Mono;
+
+@Component
+
+public class ExpenseServiceClient {
+
+        private final WebClient webClient;
+
+        public ExpenseServiceClient(@Qualifier("expenseWebClient") WebClient webClient) {
+                this.webClient = webClient;
+        }
+
+        // Retorna Double (0.0 si no hay gastos registrados)
+        public Double obtenerTotalGastadoPorUsuario(Long userId) {
+                return webClient.get()
+                                .uri("/api/v1/expenses/user/{userId}/total", userId)
+                                .retrieve()
+                                .onStatus(
+
+                                                status -> status.value() == 404,
+                                                response -> Mono.error(
+                                                                new ResourceNotFoundException(
+                                                                                "No se encontraron gastos para el usuario id "
+                                                                                                + userId)))
+                                .onStatus(
+
+                                                status -> status.is5xxServerError(),
+                                                response -> Mono.error(
+                                                                new RuntimeException(
+                                                                                "Error al comunicarse con expense-service")))
+                                .bodyToMono(Double.class)
+
+                                .block();
+
+        }
+}
