@@ -23,6 +23,15 @@ public class WebClientConfig implements WebMvcConfigurer {
     }
 
     @Bean
+    @Qualifier("userWebClient")
+    public WebClient userWebClient() {
+        return WebClient.builder()
+                .baseUrl("http://localhost:8080")
+                .defaultHeader("Content-Type", "application/json")
+                .build();
+    }
+
+    @Bean
     @Qualifier("expenseWebClient")
     public WebClient expenseWebClient() {
         return WebClient.builder()
