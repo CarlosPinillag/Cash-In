@@ -15,19 +15,15 @@ import cl.duoc.cashin.CategoryService.dto.Request.CategoryUpdateRequest;
 import cl.duoc.cashin.CategoryService.dto.Response.CategoryResponse;
 import lombok.RequiredArgsConstructor;
 
-@Service // registra esta clase como Bean de lógica de negocio
-@RequiredArgsConstructor // Lombok genera constructor con los atributos 'final'
+@Service
+@RequiredArgsConstructor
 
 public class CategoryService {
 
-    // Logger SLF4J — siempre usar esto, NUNCA System.out.println
     private static final Logger log = LoggerFactory.getLogger(CategoryService.class);
 
     private final CategoryRepository categoryRepository;
 
-    // ── MAPPER privado: CategoryModel → CategoryResponse ──────────────
-    // Convierte la entidad JPA en el DTO que se devuelve al cliente
-    // Es privado porque solo el service lo usa
     private CategoryResponse mapToResponse(CategoryModel model) {
         CategoryResponse response = new CategoryResponse();
         response.setIdCategory(model.getIdCategory());
@@ -38,11 +34,12 @@ public class CategoryService {
         return response;
     }
 
-    // ── CREAR ──────────────────────────────────────────────────────────
+    // ── CREAR
     public CategoryResponse crear(CategoryRequest request) {
         log.info("Creando categoria con nombre: {} y tipo: {}", request.getNombre(), request.getTipo());
 
-        // Regla 1: No puede existir otra categoría con el mismo nombre (case-insensitive)
+        // Regla 1: No puede existir otra categoría con el mismo nombre
+        // (case-insensitive)
         categoryRepository.findByNombre(request.getNombre()).ifPresent(existente -> {
             throw new RuntimeException(
                     "Ya existe una categoria con el nombre: " + request.getNombre());
@@ -60,21 +57,16 @@ public class CategoryService {
         return mapToResponse(guardado);
     }
 
-    // ── OBTENER POR ID ─────────────────────────────────────────────────
     public CategoryResponse obtenerPorId(Long id) {
         log.info("Buscando categoria id: {}", id);
 
         CategoryModel model = categoryRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException(
                         "Categoria con id " + id + " no encontrada"));
-        // findById retorna Optional<CategoryModel>
-        // orElseThrow: si el Optional está vacío, lanza la excepción
-        // GlobalExceptionHandler la captura → HTTP 404
 
         return mapToResponse(model);
     }
 
-    // ── LISTAR TODAS ───────────────────────────────────────────────────
     public List<CategoryResponse> listarTodas() {
         log.info("Listando todas las categorias");
 
@@ -84,7 +76,6 @@ public class CategoryService {
                 .collect(Collectors.toList());
     }
 
-    // ── LISTAR POR ESTADO (activo/inactivo) ────────────────────────────
     public List<CategoryResponse> listarPorActivo(Boolean activo) {
         log.info("Listando categorias con activo: {}", activo);
 
@@ -94,9 +85,6 @@ public class CategoryService {
                 .collect(Collectors.toList());
     }
 
-    // ── LISTAR POR TIPO ────────────────────────────────────────────────
-    // Endpoint consumido por expense-service e income-service para mostrar
-    // solo las categorías disponibles para su tipo de operación
     public List<CategoryResponse> listarPorTipo(String tipo) {
         log.info("Listando categorias de tipo: {}", tipo);
 
@@ -111,7 +99,6 @@ public class CategoryService {
                 .collect(Collectors.toList());
     }
 
-    // ── ACTUALIZAR ─────────────────────────────────────────────────────
     public CategoryResponse actualizar(Long id, CategoryUpdateRequest request) {
         log.info("Actualizando categoria id: {}", id);
 
@@ -119,7 +106,6 @@ public class CategoryService {
                 .orElseThrow(() -> new ResourceNotFoundException(
                         "Categoria con id " + id + " no encontrada"));
 
-        // Si viene nuevo nombre, verificar que no esté ya en uso por otra categoría
         if (request.getNombre() != null) {
             categoryRepository.findByNombre(request.getNombre()).ifPresent(existente -> {
                 // Solo es conflicto si es una categoría distinta a la actual
@@ -131,7 +117,6 @@ public class CategoryService {
             model.setNombre(request.getNombre());
         }
 
-        // ── ACTUALIZAR SOLO CAMPOS NO NULL ──────────────────────────────
         if (request.getDescripcion() != null) {
             model.setDescripcion(request.getDescripcion());
         }
@@ -148,9 +133,6 @@ public class CategoryService {
         return mapToResponse(actualizado);
     }
 
-    // ── DESACTIVAR (soft-delete) ───────────────────────────────────────
-    // No se elimina físicamente: los registros de expense/income mantienen
-    // su categoryId y nombreCategoria válidos gracias a la desnormalización
     public void desactivar(Long id) {
         log.info("Desactivando categoria id: {}", id);
 
@@ -158,7 +140,6 @@ public class CategoryService {
                 .orElseThrow(() -> new ResourceNotFoundException(
                         "Categoria con id " + id + " no existe"));
 
-        // Regla: no se puede desactivar una categoría ya inactiva
         if (!model.getActivo()) {
             throw new RuntimeException("La categoria con id " + id + " ya esta desactivada");
         }
@@ -168,8 +149,6 @@ public class CategoryService {
         log.info("Categoria id: {} desactivada exitosamente", id);
     }
 
-    // ── ELIMINAR ────────────────────────────────────────────────────────
-    // Eliminación física — solo para casos donde no hay dependencias externas
     public void eliminar(Long id) {
         log.info("Eliminando categoria id: {}", id);
 
