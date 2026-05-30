@@ -22,7 +22,7 @@ public class UserCreateRequest {
     private String nombre;
 
     @NotBlank(message = "EL EMAIL ES OBLIGATORIO")
-    @Email(message = "FORMATO DE EMAIL INVALIDO") // ← agregar para validar formato
+    @Email(message = "FORMATO DE EMAIL INVALIDO")
     @Size(min = 9, max = 100, message = "EL EMAIL DEBE TENER MINIMO 9 Y MAXIMO 100 CARACTERES")
     private String email;
 

@@ -5,8 +5,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 
 import cl.duoc.cashin.UserService.dto.Response.UserResponse;
 import cl.duoc.cashin.UserService.Exception.ResourceNotFoundException;
-//                                         ^ 'Exception' con E mayúscula
-//                                           debe coincidir con el nombre real de la carpeta
+
 import lombok.RequiredArgsConstructor;
 import reactor.core.publisher.Mono;
 
