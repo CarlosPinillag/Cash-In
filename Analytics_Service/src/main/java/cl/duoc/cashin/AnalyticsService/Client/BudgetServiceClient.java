@@ -19,21 +19,19 @@ public class BudgetServiceClient {
         this.webClient = webClient;
     }
 
-    public List<BudgetRemoteResponse> obtenerPresupuestosPorUsuario(Long userId) {
+    public List<BudgetRemoteResponse> obtenerPresupuestosPorUsuario(Long userId, String authHeader) {
         return webClient.get()
                 .uri("/api/v1/budgets/user/{userId}", userId)
+                .header("Authorization", authHeader)
                 .retrieve()
                 .onStatus(
-                        // Si budget-service retorna cualquier error 5xx
                         status -> status.is5xxServerError(),
                         response -> Mono.error(
                                 new RuntimeException(
                                         "Error al comunicarse con budget-service")))
-
                 .bodyToMono(new ParameterizedTypeReference<List<BudgetRemoteResponse>>() {
                 })
-                .defaultIfEmpty(List.of()) // Si no hay presupuestos, retorna lista vacía
+                .defaultIfEmpty(List.of())
                 .block();
-        // Convierte el flujo reactivo en bloqueante — espera la respuesta
     }
 }

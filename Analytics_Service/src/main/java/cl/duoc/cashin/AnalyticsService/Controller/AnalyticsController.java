@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -29,9 +30,10 @@ public class AnalyticsController {
 
     @PostMapping
     public ResponseEntity<AnalyticsResponse> generarAnalisis(
-            @Valid @RequestBody AnalyticsRequest request) {
+            @Valid @RequestBody AnalyticsRequest request,
+            @RequestHeader("Authorization") String authHeader) {
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(analyticsService.generarAnalisis(request)); // HTTP 201
+                .body(analyticsService.generarAnalisis(request, authHeader)); // HTTP 201
     }
 
     @GetMapping("/{id}")
@@ -47,8 +49,9 @@ public class AnalyticsController {
 
     @GetMapping("/user/{userId}/resumen")
     public ResponseEntity<ResumenFinancieroResponse> obtenerResumenFinanciero(
-            @PathVariable Long userId) {
-        return ResponseEntity.ok(analyticsService.obtenerResumenFinanciero(userId));
+            @PathVariable Long userId,
+            @RequestHeader("Authorization") String authHeader) {
+        return ResponseEntity.ok(analyticsService.obtenerResumenFinanciero(userId, authHeader));
     }
 
     @DeleteMapping("/{id}")

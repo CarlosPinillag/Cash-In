@@ -16,19 +16,18 @@ public class ExpenseServiceClient {
                 this.webClient = webClient;
         }
 
-        public Double obtenerTotalGastadoPorUsuario(Long userId) {
+        public Double obtenerTotalGastadoPorUsuario(Long userId, String authHeader) {
                 return webClient.get()
                                 .uri("/api/v1/expenses/user/{userId}/total", userId)
+                                .header("Authorization", authHeader)
                                 .retrieve()
                                 .onStatus(
-                                                // Si expense-service retorna 404, el usuario no tiene gastos
                                                 status -> status.value() == 404,
                                                 response -> Mono.error(
                                                                 new ResourceNotFoundException(
                                                                                 "No se encontraron gastos para el usuario id "
                                                                                                 + userId)))
                                 .onStatus(
-                                                // Si expense-service retorna cualquier otro error (500)
                                                 status -> status.is5xxServerError(),
                                                 response -> Mono.error(
                                                                 new RuntimeException(
@@ -36,6 +35,5 @@ public class ExpenseServiceClient {
                                 .bodyToMono(Double.class)
                                 .defaultIfEmpty(0.0)
                                 .block();
-                // Convierte el flujo reactivo en bloqueante — espera la respuesta
         }
 }
