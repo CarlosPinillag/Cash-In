@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import cl.duoc.cashin.AnalyticsService.Client.BudgetServiceClient;
 import cl.duoc.cashin.AnalyticsService.Client.ExpenseServiceClient;
 import cl.duoc.cashin.AnalyticsService.Client.IncomeServiceClient;
+import cl.duoc.cashin.AnalyticsService.Client.UserServiceClient;
 import cl.duoc.cashin.AnalyticsService.Exception.ResourceNotFoundException;
 import cl.duoc.cashin.AnalyticsService.Model.AnalyticsModel;
 import cl.duoc.cashin.AnalyticsService.Repository.AnalyticsRepository;
@@ -30,6 +31,7 @@ public class AnalyticsService {
     private final ExpenseServiceClient expenseServiceClient;
     private final IncomeServiceClient incomeServiceClient;
     private final BudgetServiceClient budgetServiceClient;
+    private final UserServiceClient userServiceClient;
 
     private AnalyticsResponse mapToResponse(AnalyticsModel model) {
         AnalyticsResponse response = new AnalyticsResponse();
@@ -71,6 +73,10 @@ public class AnalyticsService {
     // ── GENERAR ANÁLISIS
     public AnalyticsResponse generarAnalisis(AnalyticsRequest request, String authHeader) {
         log.info("Generando análisis financiero para userId: {}", request.getUserId());
+
+        // Validar que el usuario existe
+        userServiceClient.obtenerUsuarioPorId(request.getUserId(), authHeader);
+        log.info("Usuario id: {} validado en user-service", request.getUserId());
 
         Double totalIngresos = incomeServiceClient.obtenerTotalIngresosPorUsuario(request.getUserId(), authHeader);
         log.info("Total ingresos para userId {}: {}", request.getUserId(), totalIngresos);
@@ -126,6 +132,10 @@ public class AnalyticsService {
     // ── RESUMEN FINANCIERO COMPLETO
     public ResumenFinancieroResponse obtenerResumenFinanciero(Long userId, String authHeader) {
         log.info("Generando resumen financiero completo para userId: {}", userId);
+
+        // Validar que el usuario existe — lanza 404 si no existe
+        userServiceClient.obtenerUsuarioPorId(userId, authHeader);
+        log.info("Usuario id: {} validado en user-service", userId);
 
         Double totalIngresos = incomeServiceClient.obtenerTotalIngresosPorUsuario(userId, authHeader);
         Double totalGastos = expenseServiceClient.obtenerTotalGastadoPorUsuario(userId, authHeader);
