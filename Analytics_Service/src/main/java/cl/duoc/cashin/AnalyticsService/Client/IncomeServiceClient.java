@@ -16,27 +16,24 @@ public class IncomeServiceClient {
                 this.webClient = webClient;
         }
 
-        public Double obtenerTotalIngresosPorUsuario(Long userId) {
+        public Double obtenerTotalIngresosPorUsuario(Long userId, String authHeader) {
                 return webClient.get()
                                 .uri("/api/v1/incomes/user/{userId}/total", userId)
+                                .header("Authorization", authHeader)
                                 .retrieve()
                                 .onStatus(
-                                                // Si income-service retorna 404, el usuario no tiene ingresos
                                                 status -> status.value() == 404,
                                                 response -> Mono.error(
                                                                 new ResourceNotFoundException(
                                                                                 "No se encontraron ingresos para el usuario id "
                                                                                                 + userId)))
                                 .onStatus(
-                                                // Si income-service retorna cualquier otro error (500)
                                                 status -> status.is5xxServerError(),
                                                 response -> Mono.error(
                                                                 new RuntimeException(
                                                                                 "Error al comunicarse con income-service")))
                                 .bodyToMono(Double.class)
-
                                 .defaultIfEmpty(0.0)
                                 .block();
-                // Convierte el flujo en bloqueante — espera la respuesta
         }
 }
