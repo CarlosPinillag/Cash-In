@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -22,37 +23,32 @@ import lombok.RequiredArgsConstructor;
 @RestController
 @RequestMapping("/api/v1/incomes")
 @RequiredArgsConstructor
-
 public class IncomeController {
 
     private final IncomeService incomeService;
 
-    // Registrar nuevo ingreso
     @PostMapping
     public ResponseEntity<IncomeResponse> crear(
+            @RequestHeader("Authorization") String authHeader,
             @Valid @RequestBody IncomeRequest request) {
-        return ResponseEntity.ok(incomeService.crear(request));
+        return ResponseEntity.ok(incomeService.crear(request, authHeader));
     }
 
-    // Obtener detalle de un ingreso
     @GetMapping("/{id}")
     public ResponseEntity<IncomeResponse> obtenerPorId(@PathVariable Long id) {
         return ResponseEntity.ok(incomeService.obtenerPorId(id));
     }
 
-    // Listar todos los ingresos de un usuario
     @GetMapping("/user/{userId}")
     public ResponseEntity<List<IncomeResponse>> listarPorUsuario(@PathVariable Long userId) {
         return ResponseEntity.ok(incomeService.listarPorUsuario(userId));
     }
 
-    // — Total de ingresos por usuario
     @GetMapping("/user/{userId}/total")
     public ResponseEntity<Double> obtenerTotalPorUsuario(@PathVariable Long userId) {
         return ResponseEntity.ok(incomeService.obtenerTotalPorUsuario(userId));
     }
 
-    // Actualizar un ingreso existente
     @PutMapping("/{id}")
     public ResponseEntity<IncomeResponse> actualizar(
             @PathVariable Long id,
@@ -60,10 +56,9 @@ public class IncomeController {
         return ResponseEntity.ok(incomeService.actualizar(id, request));
     }
 
-    // — Eliminar un ingreso
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> eliminar(@PathVariable Long id) {
         incomeService.eliminar(id);
-        return ResponseEntity.noContent().build(); // HTTP 204 sin body
+        return ResponseEntity.noContent().build();
     }
 }

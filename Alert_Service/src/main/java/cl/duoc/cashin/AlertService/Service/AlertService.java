@@ -38,19 +38,13 @@ public class AlertService {
         return response;
     }
 
-    // ── CREAR
-    // Llamado por budget-service cuando un presupuesto supera el 80% o 100%
-    public AlertResponse crear(AlertRequest request) {
+    public AlertResponse crear(AlertRequest request, String authHeader) {
         log.info("Creando alerta tipo: {} para userId: {} — budgetId: {}",
                 request.getTipo(), request.getUserId(), request.getBudgetId());
 
-        // Regla 1: Validar que el usuario existe en user-service
-        // Si retorna 404 ResourceNotFoundException propagada automáticamente
-        userServiceClient.obtenerUsuarioPorId(request.getUserId());
+        userServiceClient.obtenerUsuarioPorId(request.getUserId(), authHeader);
         log.info("Usuario id: {} validado en user-service", request.getUserId());
 
-        // Regla 2: Evitar duplicar alertas del mismo tipo para el mismo presupuesto
-        // Si ya existe una ALERTA no leída para el mismo budgetId, no crear otra
         boolean duplicada = alertRepository.findByBudgetId(request.getBudgetId())
                 .stream()
                 .anyMatch(a -> a.getTipo().equals(request.getTipo()) && !a.getLeida());
@@ -62,7 +56,6 @@ public class AlertService {
                             + ". Márcala como leída antes de crear una nueva.");
         }
 
-        // Construir la entidad
         AlertModel model = new AlertModel();
         model.setUserId(request.getUserId());
         model.setBudgetId(request.getBudgetId());
@@ -78,7 +71,6 @@ public class AlertService {
         return mapToResponse(guardada);
     }
 
-    // ── OBTENER POR ID
     public AlertResponse obtenerPorId(Long id) {
         log.info("Buscando alerta id: {}", id);
 
@@ -89,8 +81,6 @@ public class AlertService {
         return mapToResponse(model);
     }
 
-    // LISTAR POR USUARIO
-
     public List<AlertResponse> listarPorUsuario(Long userId) {
         log.info("Listando alertas del usuario id: {}", userId);
 
@@ -99,8 +89,6 @@ public class AlertService {
                 .map(this::mapToResponse)
                 .collect(Collectors.toList());
     }
-
-    // ── LISTAR NO LEÍDAS POR USUARIO
 
     public List<AlertResponse> listarNoLeidasPorUsuario(Long userId) {
         log.info("Listando alertas no leídas del usuario id: {}", userId);
@@ -111,9 +99,6 @@ public class AlertService {
                 .collect(Collectors.toList());
     }
 
-    // ── MARCAR COMO LEÍDA
-
-    // PUT /api/v1/alerts/{id}/leer
     public AlertResponse marcarComoLeida(Long id) {
         log.info("Marcando alerta id: {} como leída", id);
 
@@ -132,8 +117,6 @@ public class AlertService {
         return mapToResponse(actualizada);
     }
 
-    // ── CONTAR NO LEÍDAS
-
     public Long contarNoLeidasPorUsuario(Long userId) {
         log.info("Contando alertas no leídas del usuario id: {}", userId);
 
@@ -142,8 +125,6 @@ public class AlertService {
         return total;
     }
 
-    // ── ELIMINAR
-    // Eliminación física
     public void eliminar(Long id) {
         log.info("Eliminando alerta id: {}", id);
 

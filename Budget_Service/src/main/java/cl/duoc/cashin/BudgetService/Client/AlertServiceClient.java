@@ -19,10 +19,7 @@ public class AlertServiceClient {
                 this.webClient = webClient;
         }
 
-        // Llama a alert-service para crear una alerta de presupuesto superado
-
-        // tipo: "ALERTA_80" (>=80%) o "ALERTA_100" (>=100%)
-        public AlertRemoteResponse crearAlerta(Long userId, Long budgetId, String tipo, String mensaje) {
+        public AlertRemoteResponse crearAlerta(Long userId, Long budgetId, String tipo, String mensaje, String authHeader) {
 
                 Map<String, Object> body = Map.of(
                                 "userId", userId,
@@ -32,10 +29,10 @@ public class AlertServiceClient {
 
                 return webClient.post()
                                 .uri("/api/v1/alerts")
+                                .header("Authorization", authHeader)
                                 .bodyValue(body)
                                 .retrieve()
                                 .onStatus(
-                                                // Si alert-service retorna error de servidor
                                                 status -> status.is5xxServerError(),
                                                 response -> Mono.error(
                                                                 new RuntimeException(

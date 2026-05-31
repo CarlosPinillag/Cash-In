@@ -17,10 +17,10 @@ public class ExpenseServiceClient {
                 this.webClient = webClient;
         }
 
-        // Retorna Double (0.0 si no hay gastos registrados)
-        public Double obtenerTotalGastadoPorUsuario(Long userId) {
+        public Double obtenerTotalGastadoPorUsuario(Long userId, String authHeader) {
                 return webClient.get()
                                 .uri("/api/v1/expenses/user/{userId}/total", userId)
+                                .header("Authorization", authHeader)
                                 .retrieve()
                                 .onStatus(
 
