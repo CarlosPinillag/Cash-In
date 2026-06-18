@@ -6,8 +6,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-// DTO para mapear la respuesta de budget-service
-// Solo contiene los campos necesarios para analytics (no todos los campos del BudgetResponse)
 @Data
 @AllArgsConstructor
 @NoArgsConstructor

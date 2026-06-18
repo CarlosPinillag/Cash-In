@@ -6,8 +6,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-// DTO de respuesta principal — expuesto al cliente REST
-// No expone la entidad JPA directamente (separación DTO/entidad)
 @Data
 @AllArgsConstructor
 @NoArgsConstructor

@@ -1,0 +1,51 @@
+2026-06-17 22:52:58 [background-preinit] INFO  o.h.validator.internal.util.Version - HV000001: Hibernate Validator 9.0.1.Final
+2026-06-17 22:52:58 [restartedMain] INFO  c.d.c.U.UserServiceApplication - Starting UserServiceApplication using Java 21.0.10 with PID 28804 (C:\Users\Safagod\Downloads\eee\Cash-In-master\UserService\target\classes started by Safagod in C:\Users\Safagod\Downloads\eee\Cash-In-master\UserService)
+2026-06-17 22:52:58 [restartedMain] INFO  c.d.c.U.UserServiceApplication - No active profile set, falling back to 1 default profile: "default"
+2026-06-17 22:52:58 [restartedMain] INFO  o.s.b.d.e.DevToolsPropertyDefaultsPostProcessor - Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+2026-06-17 22:52:58 [restartedMain] INFO  o.s.b.d.e.DevToolsPropertyDefaultsPostProcessor - For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
+2026-06-17 22:52:59 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-06-17 22:52:59 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 145 ms. Found 1 JPA repository interface.
+2026-06-17 22:53:00 [restartedMain] INFO  o.s.boot.tomcat.TomcatWebServer - Tomcat initialized with port 8080 (http)
+2026-06-17 22:53:00 [restartedMain] INFO  o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8080"]
+2026-06-17 22:53:00 [restartedMain] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2026-06-17 22:53:00 [restartedMain] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/11.0.21]
+2026-06-17 22:53:00 [restartedMain] INFO  o.s.b.w.c.s.WebApplicationContextInitializer - Root WebApplicationContext: initialization completed in 1986 ms
+2026-06-17 22:53:00 [restartedMain] INFO  org.hibernate.orm.jpa - HHH008540: Processing PersistenceUnitInfo [name: default]
+2026-06-17 22:53:00 [restartedMain] INFO  org.hibernate.orm.core - HHH000001: Hibernate ORM core version 7.2.12.Final
+2026-06-17 22:53:01 [restartedMain] INFO  o.s.o.j.p.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-06-17 22:53:01 [restartedMain] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2026-06-17 22:53:01 [restartedMain] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@77dabaf
+2026-06-17 22:53:01 [restartedMain] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2026-06-17 22:53:01 [restartedMain] WARN  org.hibernate.orm.deprecation - HHH90000025: MySQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2026-06-17 22:53:01 [restartedMain] INFO  o.hibernate.orm.connections.pooling - HHH10001005: Database info:
+	Database JDBC URL [jdbc:mysql://localhost:3306/db_users]
+	Database driver: MySQL Connector/J
+	Database dialect: MySQLDialect
+	Database version: 8.0.46
+	Default catalog/schema: db_users/undefined
+	Autocommit mode: undefined/unknown
+	Isolation level: REPEATABLE_READ [default REPEATABLE_READ]
+	JDBC fetch size: none
+	Pool: DataSourceConnectionProvider
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2026-06-17 22:53:02 [restartedMain] INFO  org.hibernate.orm.core - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-06-17 22:53:02 [restartedMain] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-06-17 22:53:02 [restartedMain] INFO  o.s.d.j.r.q.QueryEnhancerFactories - Hibernate is in classpath; If applicable, HQL parser will be used.
+2026-06-17 22:53:03 [restartedMain] WARN  o.s.b.j.a.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2026-06-17 22:53:03 [restartedMain] INFO  o.a.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8080"]
+2026-06-17 22:53:03 [restartedMain] INFO  o.s.boot.tomcat.TomcatWebServer - Tomcat started on port 8080 (http) with context path '/'
+2026-06-17 22:53:03 [restartedMain] INFO  c.d.c.U.UserServiceApplication - Started UserServiceApplication in 5.694 seconds (process running for 6.337)
+2026-06-17 22:56:00 [http-nio-8080-exec-2] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2026-06-17 22:56:00 [http-nio-8080-exec-2] INFO  o.s.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+2026-06-17 22:56:00 [http-nio-8080-exec-2] INFO  o.s.web.servlet.DispatcherServlet - Completed initialization in 1 ms
+2026-06-17 22:56:00 [http-nio-8080-exec-2] WARN  c.d.c.U.E.GlobalExceptionHandler - Error de validación: [Field error in object 'userCreateRequest' on field 'password': rejected value [password123]; codes [Size.userCreateRequest.password,Size.password,Size.java.lang.String,Size]; arguments [org.springframework.context.support.DefaultMessageSourceResolvable: codes [userCreateRequest.password,password]; arguments []; default message [password],10,6]; default message [EL PASSWORD DEBE TENER MINIMO 6 Y MAXIMO 10 CARACTERES]]
+2026-06-17 22:56:00 [http-nio-8080-exec-2] WARN  o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver - Resolved [org.springframework.web.bind.MethodArgumentNotValidException: Validation failed for argument [0] in public org.springframework.http.ResponseEntity<cl.duoc.cashin.UserService.dto.Response.UserResponse> cl.duoc.cashin.UserService.Controller.UserController.crear(cl.duoc.cashin.UserService.dto.Request.UserCreateRequest): [Field error in object 'userCreateRequest' on field 'password': rejected value [password123]; codes [Size.userCreateRequest.password,Size.password,Size.java.lang.String,Size]; arguments [org.springframework.context.support.DefaultMessageSourceResolvable: codes [userCreateRequest.password,password]; arguments []; default message [password],10,6]; default message [EL PASSWORD DEBE TENER MINIMO 6 Y MAXIMO 10 CARACTERES]] ]
+2026-06-17 22:56:52 [http-nio-8080-exec-4] INFO  c.d.c.U.Service.UserService - Creando usuario con email: juan@test.com
+2026-06-17 22:56:53 [http-nio-8080-exec-4] INFO  c.d.c.U.Service.UserService - Usuario creado con id: 2
+2026-06-17 23:01:10 [http-nio-8080-exec-9] INFO  c.d.c.U.Service.UserService - Buscando usuario id: 1
+2026-06-17 23:02:56 [http-nio-8080-exec-1] INFO  c.d.c.U.Service.UserService - Buscando usuario id: 1
+2026-06-17 23:04:14 [http-nio-8080-exec-3] INFO  c.d.c.U.Service.UserService - Buscando usuario id: 1
+2026-06-17 23:04:21 [http-nio-8080-exec-4] INFO  c.d.c.U.Service.UserService - Buscando usuario id: 1
+2026-06-17 23:04:58 [http-nio-8080-exec-5] INFO  c.d.c.U.Service.UserService - Buscando usuario id: 1
+2026-06-17 23:05:16 [http-nio-8080-exec-6] INFO  c.d.c.U.Service.UserService - Buscando usuario id: 1
