@@ -32,7 +32,7 @@ public class UserServiceClient {
                                                                                 "Usuario con email " + email
                                                                                                 + " no existe en el sistema")))
                                 .onStatus(
-                                                // Si retorna cualquier otro error (500, etc.)
+                                                // Si retorna cualquier otro error (500 o similar)
                                                 status -> status.is5xxServerError(),
                                                 response -> Mono.error(
                                                                 new RuntimeException(

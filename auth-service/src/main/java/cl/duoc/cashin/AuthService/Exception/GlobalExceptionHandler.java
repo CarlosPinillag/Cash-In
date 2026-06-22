@@ -12,63 +12,73 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import cl.duoc.cashin.AuthService.dto.DtoApiError;
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @RestControllerAdvice
-
 public class GlobalExceptionHandler {
 
-        // Errores de validacion
-        // Se activa cuando un campo del Request no pasa
-        @ExceptionHandler(MethodArgumentNotValidException.class)
-        public ResponseEntity<Map<String, String>> handleValidation(
-                        MethodArgumentNotValidException ex) {
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<Map<String, String>> handleValidation(
+            MethodArgumentNotValidException ex) {
 
-                Map<String, String> errores = new HashMap<>();
-                ex.getBindingResult()
-                                .getFieldErrors()
-                                .forEach(error -> errores.put(
-                                                error.getField(), // "username", "password", etc.
-                                                error.getDefaultMessage() // mensaje del @NotBlank
-                                ));
+        // registra qué campos fallaron la validación 
+        log.warn("Error de validación: {}", ex.getBindingResult().getFieldErrors());
 
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errores); // HTTP 400
-        }
+        Map<String, String> errores = new HashMap<>();
+        ex.getBindingResult()
+                .getFieldErrors()
+                .forEach(error -> errores.put(
+                        error.getField(),
+                        error.getDefaultMessage()));
 
-        // Se activa cuando buscamos un token o usuario que no existe
-        @ExceptionHandler(ResourceNotFoundException.class)
-        public ResponseEntity<DtoApiError> handleNotFound(
-                        ResourceNotFoundException ex, HttpServletRequest request) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errores);
+    }
 
-                DtoApiError error = DtoApiError.builder()
-                                .timestamp(LocalDate.now())
-                                .status(HttpStatus.NOT_FOUND.value()) // 404
-                                .error(HttpStatus.NOT_FOUND.getReasonPhrase()) // "Not Found"
-                                .message(ex.getMessage())
-                                .path(request.getRequestURI())
-                                .claseException("ResourceNotFoundException")
-                                .build();
+    @ExceptionHandler(ResourceNotFoundException.class)
+    public ResponseEntity<DtoApiError> handleNotFound(
+            ResourceNotFoundException ex, HttpServletRequest request) {
 
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
-        }
+        // registra qué recurso no se encontró y en qué path 
+        log.warn("Recurso no encontrado en {}: {}", request.getRequestURI(), ex.getMessage());
 
-        @ExceptionHandler(RuntimeException.class)
-        public ResponseEntity<String> handleRuntime(RuntimeException ex) {
-                return ResponseEntity.status(HttpStatus.CONFLICT).body(ex.getMessage()); // HTTP 409
-        }
+        DtoApiError error = DtoApiError.builder()
+                .timestamp(LocalDate.now())
+                .status(HttpStatus.NOT_FOUND.value())
+                .error(HttpStatus.NOT_FOUND.getReasonPhrase())
+                .message(ex.getMessage())
+                .path(request.getRequestURI())
+                .claseException("ResourceNotFoundException")
+                .build();
 
-        @ExceptionHandler(Exception.class)
-        public ResponseEntity<DtoApiError> handleGeneral(
-                        Exception ex, HttpServletRequest request) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
+    }
 
-                DtoApiError error = DtoApiError.builder()
-                                .timestamp(LocalDate.now())
-                                .status(HttpStatus.INTERNAL_SERVER_ERROR.value()) // 500
-                                .error(HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase()) // "Internal Server Error"
-                                .message("Error interno del servidor: " + ex.getMessage())
-                                .path(request.getRequestURI())
-                                .claseException(ex.getClass().getSimpleName())
-                                .build();
+    @ExceptionHandler(RuntimeException.class)
+    public ResponseEntity<String> handleRuntime(RuntimeException ex) {
 
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
-        }
+        // registra reglas de negocio violadas (409 Conflict) 
+        log.warn("Conflicto de negocio: {}", ex.getMessage());
+
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(ex.getMessage());
+    }
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<DtoApiError> handleGeneral(
+            Exception ex, HttpServletRequest request) {
+
+        // registra errores inesperados (500) con stack trace 
+        log.error("Error interno en {}: {}", request.getRequestURI(), ex.getMessage(), ex);
+
+        DtoApiError error = DtoApiError.builder()
+                .timestamp(LocalDate.now())
+                .status(HttpStatus.INTERNAL_SERVER_ERROR.value())
+                .error(HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase())
+                .message("Error interno del servidor: " + ex.getMessage())
+                .path(request.getRequestURI())
+                .claseException(ex.getClass().getSimpleName())
+                .build();
+
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
+    }
 }
