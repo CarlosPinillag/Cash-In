@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -48,8 +49,10 @@ public class BudgetController {
     }
 
     @GetMapping("/{id}/seguimiento")
-    public ResponseEntity<BudgetResponse> obtenerSeguimiento(@PathVariable Long id) {
-        return ResponseEntity.ok(budgetService.obtenerSeguimiento(id));
+    public ResponseEntity<BudgetResponse> obtenerSeguimiento(
+            @PathVariable Long id,
+            @RequestHeader("Authorization") String authHeader) {
+        return ResponseEntity.ok(budgetService.obtenerSeguimiento(id, authHeader));
     }
 
     @PutMapping("/{id}")
@@ -62,6 +65,6 @@ public class BudgetController {
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> eliminar(@PathVariable Long id) {
         budgetService.eliminar(id);
-        return ResponseEntity.noContent().build(); // HTTP 204 sin body
+        return ResponseEntity.noContent().build();
     }
 }

@@ -10,15 +10,12 @@ import cl.duoc.cashin.AlertService.Model.AlertModel;
 
 public interface AlertRepository extends JpaRepository<AlertModel, Long> {
 
-    // Spring genera: SELECT * FROM Alert WHERE userId = ? ORDER BY fechaCreacion DESC
     // Usado para listar todas las alertas de un usuario, más recientes primero
     List<AlertModel> findByUserIdOrderByFechaCreacionDesc(Long userId);
 
-    // Spring genera: SELECT * FROM Alert WHERE userId = ? AND leida = false
     // Usado para listar solo las alertas pendientes de lectura del usuario
     List<AlertModel> findByUserIdAndLeidaFalse(Long userId);
 
-    // Spring genera: SELECT * FROM Alert WHERE budgetId = ?
     // Usado para consultar todas las alertas asociadas a un presupuesto
     List<AlertModel> findByBudgetId(Long budgetId);
 

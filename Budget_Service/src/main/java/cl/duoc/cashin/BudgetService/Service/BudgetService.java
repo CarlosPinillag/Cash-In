@@ -109,11 +109,7 @@ public class BudgetService {
                 .collect(Collectors.toList());
     }
 
-    // ── SEGUIMIENTO:
-    // Este endpoint llama a expense-service para calcular en tiempo real el
-    // porcentaje usado
-    // y dispara alertas a alert-service si se superan los umbrales (80% y 100%)
-    public BudgetResponse obtenerSeguimiento(Long id) {
+    public BudgetResponse obtenerSeguimiento(Long id, String authHeader) {
         log.info("Calculando seguimiento del presupuesto id: {}", id);
 
         BudgetModel model = budgetRepository.findById(id)
@@ -124,17 +120,11 @@ public class BudgetService {
             throw new RuntimeException("El presupuesto id " + id + " no esta activo");
         }
 
-        // Paso 1:
-        Double totalGastado = expenseServiceClient.obtenerTotalGastadoPorUsuario(model.getUserId());
-        // Si no hay gastos, expense-service retorna 0.0
+        Double totalGastado = expenseServiceClient.obtenerTotalGastadoPorUsuario(model.getUserId(), authHeader);
         log.info("Total gastado para userId {}: {}", model.getUserId(), totalGastado);
-
-        // Paso 2: Calcular porcentaje de uso
 
         Double porcentajeUso = (totalGastado / model.getMontoLimite()) * 100;
         log.info("Porcentaje de uso del presupuesto id {}: {}%", id, porcentajeUso);
-
-        // Paso 3: Disparar alertas si se superan los limites
 
         if (porcentajeUso >= 80 && porcentajeUso < 100) {
             log.info("Presupuesto id {} supero el 80%. Creando alerta ALERTA_80", id);
@@ -145,14 +135,14 @@ public class BudgetService {
                         "ALERTA_80",
                         "Has consumido el " + String.format("%.1f", porcentajeUso)
                                 + "% de tu presupuesto de " + model.getPeriodo().toLowerCase()
-                                + " ($" + model.getMontoLimite() + ")");
+                                + " ($" + model.getMontoLimite() + ")",
+                        authHeader);
             } catch (RuntimeException e) {
 
                 log.error("No se pudo crear la alerta ALERTA_80 para budgetId {}: {}", id, e.getMessage());
             }
         }
 
-        // >= 100 (límite superado)
         if (porcentajeUso >= 100) {
             log.info("Presupuesto id {} supero el 100%. Creando alerta ALERTA_100", id);
             try {
@@ -161,13 +151,13 @@ public class BudgetService {
                         model.getIdBudget(),
                         "ALERTA_100",
                         "Has superado tu presupuesto de " + model.getPeriodo().toLowerCase()
-                                + " ($" + model.getMontoLimite() + "). Gastado: $" + totalGastado);
+                                + " ($" + model.getMontoLimite() + "). Gastado: $" + totalGastado,
+                        authHeader);
             } catch (RuntimeException e) {
                 log.error("No se pudo crear la alerta ALERTA_100 para budgetId {}: {}", id, e.getMessage());
             }
         }
 
-        // Paso 4: Actualizar porcentajeUso en la entidad y persistir
         model.setPorcentajeUso(porcentajeUso);
         BudgetModel actualizado = budgetRepository.save(model);
         log.info("Seguimiento del presupuesto id {} calculado: {}%", id, porcentajeUso);

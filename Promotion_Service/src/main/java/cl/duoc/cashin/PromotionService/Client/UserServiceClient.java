@@ -17,20 +17,21 @@ public class UserServiceClient {
                 this.webClient = webClient;
         }
 
-        // GET http://localhost:8080/api/v1/users/{id}
-        public UserRemoteResponse obtenerUsuarioPorId(Long userId) {
+        
+        public UserRemoteResponse obtenerUsuarioPorId(Long userId, String authHeader) {
                 return webClient.get()
                                 .uri("/api/v1/users/{id}", userId)
+                                .header("Authorization", authHeader)
                                 .retrieve()
                                 .onStatus(
-                                                // Si user-service retorna 404, el usuario no existe
+                                                
                                                 status -> status.value() == 404,
                                                 response -> Mono.error(
                                                                 new ResourceNotFoundException(
                                                                                 "Usuario con id " + userId
                                                                                                 + " no existe en el sistema")))
                                 .onStatus(
-                                                // Si user-service retorna cualquier error de servidor (500, etc.)
+                                                
                                                 status -> status.is5xxServerError(),
                                                 response -> Mono.error(
                                                                 new RuntimeException(
@@ -39,3 +40,4 @@ public class UserServiceClient {
                                 .block();
         }
 }
+

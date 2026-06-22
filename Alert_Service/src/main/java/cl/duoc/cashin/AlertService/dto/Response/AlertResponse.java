@@ -7,8 +7,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 // DTO de respuesta principal — expuesto al cliente REST
-// Los campos idAlert, userId, budgetId, tipo, mensaje y leida coinciden exactamente
-// con AlertRemoteResponse del budget-service para garantizar interoperabilidad
 @Data
 @AllArgsConstructor
 @NoArgsConstructor

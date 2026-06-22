@@ -1,0 +1,48 @@
+2026-06-17 22:51:21 [background-preinit] INFO  o.h.validator.internal.util.Version - HV000001: Hibernate Validator 9.0.1.Final
+2026-06-17 22:51:21 [restartedMain] INFO  c.d.c.E.ExpenseServiceApplication - Starting ExpenseServiceApplication using Java 21.0.10 with PID 5672 (C:\Users\Safagod\Downloads\eee\Cash-In-master\Expense_Service\target\classes started by Safagod in C:\Users\Safagod\Downloads\eee\Cash-In-master\Expense_Service)
+2026-06-17 22:51:21 [restartedMain] INFO  c.d.c.E.ExpenseServiceApplication - No active profile set, falling back to 1 default profile: "default"
+2026-06-17 22:51:21 [restartedMain] INFO  o.s.b.d.e.DevToolsPropertyDefaultsPostProcessor - Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+2026-06-17 22:51:21 [restartedMain] INFO  o.s.b.d.e.DevToolsPropertyDefaultsPostProcessor - For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
+2026-06-17 22:51:22 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-06-17 22:51:22 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 122 ms. Found 1 JPA repository interface.
+2026-06-17 22:51:23 [restartedMain] INFO  o.s.boot.tomcat.TomcatWebServer - Tomcat initialized with port 8082 (http)
+2026-06-17 22:51:23 [restartedMain] INFO  o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8082"]
+2026-06-17 22:51:23 [restartedMain] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2026-06-17 22:51:23 [restartedMain] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/11.0.21]
+2026-06-17 22:51:23 [restartedMain] INFO  o.s.b.w.c.s.WebApplicationContextInitializer - Root WebApplicationContext: initialization completed in 1548 ms
+2026-06-17 22:51:23 [restartedMain] INFO  org.hibernate.orm.jpa - HHH008540: Processing PersistenceUnitInfo [name: default]
+2026-06-17 22:51:23 [restartedMain] INFO  org.hibernate.orm.core - HHH000001: Hibernate ORM core version 7.2.12.Final
+2026-06-17 22:51:23 [restartedMain] INFO  o.s.o.j.p.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-06-17 22:51:23 [restartedMain] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2026-06-17 22:51:24 [restartedMain] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@39bda2d6
+2026-06-17 22:51:24 [restartedMain] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2026-06-17 22:51:24 [restartedMain] WARN  org.hibernate.orm.deprecation - HHH90000025: MySQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2026-06-17 22:51:24 [restartedMain] INFO  o.hibernate.orm.connections.pooling - HHH10001005: Database info:
+	Database JDBC URL [jdbc:mysql://localhost:3306/db_expenses]
+	Database driver: MySQL Connector/J
+	Database dialect: MySQLDialect
+	Database version: 8.0.46
+	Default catalog/schema: db_expenses/undefined
+	Autocommit mode: undefined/unknown
+	Isolation level: REPEATABLE_READ [default REPEATABLE_READ]
+	JDBC fetch size: none
+	Pool: DataSourceConnectionProvider
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2026-06-17 22:51:25 [restartedMain] INFO  org.hibernate.orm.core - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-06-17 22:51:25 [restartedMain] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-06-17 22:51:25 [restartedMain] INFO  o.s.d.j.r.q.QueryEnhancerFactories - Hibernate is in classpath; If applicable, HQL parser will be used.
+2026-06-17 22:51:26 [restartedMain] WARN  o.s.b.j.a.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2026-06-17 22:51:26 [restartedMain] INFO  o.a.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8082"]
+2026-06-17 22:51:26 [restartedMain] INFO  o.s.boot.tomcat.TomcatWebServer - Tomcat started on port 8082 (http) with context path '/'
+2026-06-17 22:51:26 [restartedMain] INFO  c.d.c.E.ExpenseServiceApplication - Started ExpenseServiceApplication in 5.459 seconds (process running for 6.004)
+2026-06-17 23:00:33 [http-nio-8082-exec-1] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2026-06-17 23:00:33 [http-nio-8082-exec-1] INFO  o.s.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+2026-06-17 23:00:33 [http-nio-8082-exec-1] INFO  o.s.web.servlet.DispatcherServlet - Completed initialization in 1 ms
+2026-06-17 23:00:34 [http-nio-8082-exec-1] WARN  c.d.c.E.E.GlobalExceptionHandler - Error de validación: [Field error in object 'expenseRequest' on field 'tipo': rejected value [null]; codes [NotBlank.expenseRequest.tipo,NotBlank.tipo,NotBlank.java.lang.String,NotBlank]; arguments [org.springframework.context.support.DefaultMessageSourceResolvable: codes [expenseRequest.tipo,tipo]; arguments []; default message [tipo]]; default message [EL TIPO ES OBLIGATORIO], Field error in object 'expenseRequest' on field 'fecha': rejected value [2026-06-18]; codes [PastOrPresent.expenseRequest.fecha,PastOrPresent.fecha,PastOrPresent.java.time.LocalDate,PastOrPresent]; arguments [org.springframework.context.support.DefaultMessageSourceResolvable: codes [expenseRequest.fecha,fecha]; arguments []; default message [fecha]]; default message [LA FECHA NO PUEDE SER FUTURA]]
+2026-06-17 23:00:34 [http-nio-8082-exec-1] WARN  o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver - Resolved [org.springframework.web.bind.MethodArgumentNotValidException: Validation failed for argument [1] in public org.springframework.http.ResponseEntity<cl.duoc.cashin.ExpenseService.dto.Response.ExpenseResponse> cl.duoc.cashin.ExpenseService.Controller.ExpenseController.crear(java.lang.String,cl.duoc.cashin.ExpenseService.dto.Request.ExpenseRequest) with 2 errors: [Field error in object 'expenseRequest' on field 'tipo': rejected value [null]; codes [NotBlank.expenseRequest.tipo,NotBlank.tipo,NotBlank.java.lang.String,NotBlank]; arguments [org.springframework.context.support.DefaultMessageSourceResolvable: codes [expenseRequest.tipo,tipo]; arguments []; default message [tipo]]; default message [EL TIPO ES OBLIGATORIO]] [Field error in object 'expenseRequest' on field 'fecha': rejected value [2026-06-18]; codes [PastOrPresent.expenseRequest.fecha,PastOrPresent.fecha,PastOrPresent.java.time.LocalDate,PastOrPresent]; arguments [org.springframework.context.support.DefaultMessageSourceResolvable: codes [expenseRequest.fecha,fecha]; arguments []; default message [fecha]]; default message [LA FECHA NO PUEDE SER FUTURA]] ]
+2026-06-17 23:01:09 [http-nio-8082-exec-4] INFO  c.d.c.E.Service.ExpenseService - Creando gasto para userId: 1 y categoryId: 1
+2026-06-17 23:01:10 [http-nio-8082-exec-4] INFO  c.d.c.E.Service.ExpenseService - Usuario id: 1 validado en user-service
+2026-06-17 23:01:10 [http-nio-8082-exec-4] INFO  c.d.c.E.Service.ExpenseService - Categoria id: 1 validada en category-service: Alimentacion
+2026-06-17 23:01:10 [http-nio-8082-exec-4] INFO  c.d.c.E.Service.ExpenseService - Gasto creado con id: 1
+2026-06-17 23:05:16 [http-nio-8082-exec-6] INFO  c.d.c.E.Service.ExpenseService - Calculando total gastado para userId: 1

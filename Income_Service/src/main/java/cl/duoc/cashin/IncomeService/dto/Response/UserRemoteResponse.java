@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class UserRemoteResponse {
 
-    // Campos que user-service retorna — solo los necesarios para este microservicio
+    // Campos que user-service retorna 
     private Long idUser;
     private String nombre;
     private String email;

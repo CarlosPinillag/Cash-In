@@ -42,30 +42,25 @@ public class ExpenseService {
         return response;
     }
 
-    // CREAR
-    public ExpenseResponse crear(ExpenseRequest request) {
+    public ExpenseResponse crear(ExpenseRequest request, String authHeader) {
         log.info("Creando gasto para userId: {} y categoryId: {}",
                 request.getUserId(), request.getCategoryId());
 
-        // Regla 1:
-        userServiceClient.obtenerUsuarioPorId(request.getUserId());
+        userServiceClient.obtenerUsuarioPorId(request.getUserId(), authHeader);
         log.info("Usuario id: {} validado en user-service", request.getUserId());
 
-        // Regla 2:
-        CategoryRemoteResponse categoria = categoryServiceClient.obtenerCategoriaPorId(request.getCategoryId());
+        CategoryRemoteResponse categoria = categoryServiceClient.obtenerCategoriaPorId(request.getCategoryId(), authHeader);
         log.info("Categoria id: {} validada en category-service: {}", request.getCategoryId(), categoria.getNombre());
 
-        // Regla 3:
         if (!categoria.getActivo()) {
             throw new RuntimeException(
                     "La categoria con id " + request.getCategoryId() + " no esta activa");
         }
 
-        // Construir la entidad con todos los campos
         ExpenseModel model = new ExpenseModel();
         model.setUserId(request.getUserId());
         model.setCategoryId(request.getCategoryId());
-        model.setNombreCategoria(categoria.getNombre()); // se guarda para evitar consultas futuras
+        model.setNombreCategoria(categoria.getNombre());
         model.setMonto(request.getMonto());
         model.setDescripcion(request.getDescripcion());
         model.setFecha(request.getFecha());
@@ -76,7 +71,6 @@ public class ExpenseService {
         return mapToResponse(guardado);
     }
 
-    // OBTENER POR ID
     public ExpenseResponse obtenerPorId(Long id) {
         log.info("Buscando gasto id: {}", id);
 
@@ -87,18 +81,15 @@ public class ExpenseService {
         return mapToResponse(model);
     }
 
-    // LISTAR POR USUARIO
     public List<ExpenseResponse> listarPorUsuario(Long userId) {
         log.info("Listando gastos del usuario id: {}", userId);
 
         return expenseRepository.findByUserId(userId)
-                .stream() // convierte List en Stream
-                .map(this::mapToResponse) // aplica mapToResponse a cada elemento
-                .collect(Collectors.toList()); // vuelve a convertir en List
+                .stream()
+                .map(this::mapToResponse)
+                .collect(Collectors.toList());
     }
 
-    // TOTAL GASTADO POR USUARIO
-    // Endpoint usado por budget-service y analytics-service
     public Double obtenerTotalPorUsuario(Long userId) {
         log.info("Calculando total gastado para userId: {}", userId);
 
@@ -107,8 +98,7 @@ public class ExpenseService {
         return total != null ? total : 0.0;
     }
 
-    // ACTUALIZAR
-    public ExpenseResponse actualizar(Long id, ExpenseUpdateRequest request) {
+    public ExpenseResponse actualizar(Long id, ExpenseUpdateRequest request, String authHeader) {
         log.info("Actualizando gasto id: {}", id);
 
         ExpenseModel model = expenseRepository.findById(id)
@@ -117,7 +107,7 @@ public class ExpenseService {
 
         if (request.getCategoryId() != null) {
             CategoryRemoteResponse categoria = categoryServiceClient
-                    .obtenerCategoriaPorId(request.getCategoryId());
+                    .obtenerCategoriaPorId(request.getCategoryId(), authHeader);
 
             if (!categoria.getActivo()) {
                 throw new RuntimeException(
@@ -128,7 +118,6 @@ public class ExpenseService {
             model.setNombreCategoria(categoria.getNombre());
         }
 
-        // ACTUALIZAR SOLO CAMPOS NO NULL
         if (request.getMonto() != null) {
             model.setMonto(request.getMonto());
         }
@@ -146,8 +135,6 @@ public class ExpenseService {
         log.info("Gasto id: {} actualizado exitosamente", id);
         return mapToResponse(actualizado);
     }
-
-    // ELIMINAR
 
     public void eliminar(Long id) {
         log.info("Eliminando gasto id: {}", id);

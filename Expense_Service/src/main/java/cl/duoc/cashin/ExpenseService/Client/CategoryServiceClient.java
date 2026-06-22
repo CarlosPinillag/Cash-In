@@ -18,25 +18,23 @@ public class CategoryServiceClient {
                 this.webClient = webClient;
         }
 
-        public CategoryRemoteResponse obtenerCategoriaPorId(Long categoryId) {
+        public CategoryRemoteResponse obtenerCategoriaPorId(Long categoryId, String authHeader) {
                 return webClient.get()
                                 .uri("/api/v1/categories/{id}", categoryId)
+                                .header("Authorization", authHeader)
                                 .retrieve()
                                 .onStatus(
-
                                                 status -> status.value() == 404,
                                                 response -> Mono.error(
                                                                 new ResourceNotFoundException(
                                                                                 "Categoria con id " + categoryId
                                                                                                 + " no existe en el sistema")))
                                 .onStatus(
-
                                                 status -> status.is5xxServerError(),
                                                 response -> Mono.error(
                                                                 new RuntimeException(
                                                                                 "Error al comunicarse con category-service")))
                                 .bodyToMono(CategoryRemoteResponse.class)
-
                                 .block();
 
         }

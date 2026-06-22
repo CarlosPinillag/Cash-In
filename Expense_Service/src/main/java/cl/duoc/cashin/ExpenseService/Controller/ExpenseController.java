@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -31,9 +32,10 @@ public class ExpenseController {
 
     @PostMapping
     public ResponseEntity<ExpenseResponse> crear(
+            @RequestHeader("Authorization") String authHeader,
             @Valid @RequestBody ExpenseRequest request) {
 
-        return ResponseEntity.ok(expenseService.crear(request));
+        return ResponseEntity.ok(expenseService.crear(request, authHeader));
     }
 
     @GetMapping("/{id}")
@@ -55,13 +57,14 @@ public class ExpenseController {
     @PutMapping("/{id}")
     public ResponseEntity<ExpenseResponse> actualizar(
             @PathVariable Long id,
+            @RequestHeader("Authorization") String authHeader,
             @Valid @RequestBody ExpenseUpdateRequest request) {
-        return ResponseEntity.ok(expenseService.actualizar(id, request));
+        return ResponseEntity.ok(expenseService.actualizar(id, request, authHeader));
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> eliminar(@PathVariable Long id) {
         expenseService.eliminar(id);
-        return ResponseEntity.noContent().build(); // HTTP 204 sin body
+        return ResponseEntity.noContent().build();
     }
 }

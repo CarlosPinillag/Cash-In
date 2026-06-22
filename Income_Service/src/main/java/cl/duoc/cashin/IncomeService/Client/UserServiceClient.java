@@ -18,9 +18,10 @@ public class UserServiceClient {
                 this.webClient = webClient;
         }
 
-        public UserRemoteResponse obtenerUsuarioPorId(Long userId) {
+        public UserRemoteResponse obtenerUsuarioPorId(Long userId, String authHeader) {
                 return webClient.get()
                                 .uri("/api/v1/users/{id}", userId)
+                                .header("Authorization", authHeader)
                                 .retrieve()
                                 .onStatus(
                                                 // Si user-service retorna 404, el usuario no existe

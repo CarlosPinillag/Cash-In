@@ -39,7 +39,6 @@ public class CategoryService {
         log.info("Creando categoria con nombre: {} y tipo: {}", request.getNombre(), request.getTipo());
 
         // Regla 1: No puede existir otra categoría con el mismo nombre
-        // (case-insensitive)
         categoryRepository.findByNombre(request.getNombre()).ifPresent(existente -> {
             throw new RuntimeException(
                     "Ya existe una categoria con el nombre: " + request.getNombre());

@@ -19,7 +19,7 @@ public class BudgetRequest {
     @NotNull(message = "EL ID DE USUARIO ES OBLIGATORIO")
     private Long userId;
 
-    // Opcional — null = presupuesto global del mes (no filtrado por categoría)
+    // Opcional — null = presupuesto global del mes 
     private Long categoryId;
 
     @NotNull(message = "EL MONTO LIMITE ES OBLIGATORIO")
