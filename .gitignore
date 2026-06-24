@@ -1,1 +1,21 @@
-target/
+# Build artifacts (todos los microservicios, sin importar la carpeta)
+**/target/
+*.class
+
+# Secrets
+.env
+_env
+
+# Logs
+logs/
+**/logs/
+*.log
+
+# IDE
+.idea/
+*.iml
+.vscode/
+
+# OS
+.DS_Store
+Thumbs.db
