@@ -1,0 +1,20 @@
+# Puerto donde se levanta Eureka Server.
+# Panel web disponible en: http://localhost:8761
+server:
+  port: 8761
+
+# Nombre de la aplicación dentro del ecosistema Spring.
+spring:
+  application:
+    name: EUREKA-SERVER
+
+# Configuración del cliente Eureka dentro del propio servidor Eureka.
+# Aunque parezca raro, Eureka Server también trae comportamiento de cliente,
+# por eso se desactiva su auto-registro.
+eureka:
+  client:
+    # false = este servidor no se registra a sí mismo como un microservicio.
+    register-with-eureka: false
+
+    # false = este servidor no necesita consultar otro registro Eureka.
+    fetch-registry: false
