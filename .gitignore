@@ -1,7 +1,8 @@
 # Build artifacts (todos los microservicios, sin importar la carpeta)
 **/target/
 *.class
-
+target/
+*.log
 # Secrets
 .env
 _env
