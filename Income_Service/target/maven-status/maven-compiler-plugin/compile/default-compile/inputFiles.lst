@@ -1,0 +1,15 @@
+C:\Users\Safagod\Downloads\Cash-In-master\Income_Service\src\main\java\cl\duoc\cashin\IncomeService\Client\UserServiceClient.java
+C:\Users\Safagod\Downloads\Cash-In-master\Income_Service\src\main\java\cl\duoc\cashin\IncomeService\Config\JwtFilter.java
+C:\Users\Safagod\Downloads\Cash-In-master\Income_Service\src\main\java\cl\duoc\cashin\IncomeService\Config\WebClientConfig.java
+C:\Users\Safagod\Downloads\Cash-In-master\Income_Service\src\main\java\cl\duoc\cashin\IncomeService\Controller\IncomeController.java
+C:\Users\Safagod\Downloads\Cash-In-master\Income_Service\src\main\java\cl\duoc\cashin\IncomeService\dto\DtoApiError.java
+C:\Users\Safagod\Downloads\Cash-In-master\Income_Service\src\main\java\cl\duoc\cashin\IncomeService\dto\Request\IncomeRequest.java
+C:\Users\Safagod\Downloads\Cash-In-master\Income_Service\src\main\java\cl\duoc\cashin\IncomeService\dto\Request\IncomeUpdateRequest.java
+C:\Users\Safagod\Downloads\Cash-In-master\Income_Service\src\main\java\cl\duoc\cashin\IncomeService\dto\Response\IncomeResponse.java
+C:\Users\Safagod\Downloads\Cash-In-master\Income_Service\src\main\java\cl\duoc\cashin\IncomeService\dto\Response\UserRemoteResponse.java
+C:\Users\Safagod\Downloads\Cash-In-master\Income_Service\src\main\java\cl\duoc\cashin\IncomeService\Exception\GlobalExceptionHandler.java
+C:\Users\Safagod\Downloads\Cash-In-master\Income_Service\src\main\java\cl\duoc\cashin\IncomeService\Exception\ResourceNotFoundException.java
+C:\Users\Safagod\Downloads\Cash-In-master\Income_Service\src\main\java\cl\duoc\cashin\IncomeService\IncomeServiceApplication.java
+C:\Users\Safagod\Downloads\Cash-In-master\Income_Service\src\main\java\cl\duoc\cashin\IncomeService\Model\IncomeModel.java
+C:\Users\Safagod\Downloads\Cash-In-master\Income_Service\src\main\java\cl\duoc\cashin\IncomeService\Repository\IncomeRepository.java
+C:\Users\Safagod\Downloads\Cash-In-master\Income_Service\src\main\java\cl\duoc\cashin\IncomeService\Service\IncomeService.java

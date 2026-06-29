@@ -1,8 +1,8 @@
 # Cash-In
 
-Cash-In es una aplicación de gestión de finanzas personales construida con arquitectura de microservicios. Cada servicio tiene su propia base de datos MySQL, corre en un puerto independiente y se comunica con los demás a través de HTTP usando WebClient. La autenticación entre servicios se hace con JWT.
+Cash-In es una aplicación de gestión de finanzas personales construida con arquitectura de microservicios. Cada servicio de negocio tiene su propia base de datos MySQL, corre en un puerto independiente y se comunica con los demás a través de HTTP usando Spring WebClient. El descubrimiento de servicios se hace con **Eureka** y el acceso externo se centraliza en un **API Gateway**. La autenticación entre servicios se hace con **JWT**.
 
-El proyecto está desarrollado en Java con Spring Boot y gestionado con Maven.
+El proyecto está desarrollado en **Java 21 + Spring Boot** y gestionado con **Maven**. La configuración de cada servicio vive en archivos **YAML** (`application.yml` / `application-dev.yml`).
 
 ---
 
@@ -10,28 +10,30 @@ El proyecto está desarrollado en Java con Spring Boot y gestionado con Maven.
 
 ```
 Cash-In/
-├── UserService          → puerto 8080
-├── auth-service         → puerto 8081
-├── Expense_Service      → puerto 8082
-├── Income_Service       → puerto 8083
-├── Budget_Service       → puerto 8084
-├── Category_Service     → puerto 8085
-├── Analytics_Service    → puerto 8086
-├── Alert_Service        → puerto 8087
-├── Notification_Service → puerto 8088
-└── Promotion_Service    → puerto 8089
+├── eureka-server         → puerto 8761   (Service Discovery)
+├── api-gateway           → puerto 8090   (punto de entrada único)
+├── UserService           → puerto 8080
+├── auth-service          → puerto 8081
+├── Expense_Service       → puerto 8082
+├── Income_Service        → puerto 8083
+├── Budget_Service        → puerto 8084
+├── Category_Service      → puerto 8085
+├── Analytics_Service     → puerto 8086
+├── Alert_Service         → puerto 8087
+├── Notification_Service  → puerto 8088
+└── Promotion_Service     → puerto 8089
 ```
 
-Cada servicio sigue la misma estructura interna: Controller, Service, Repository, Model, dto (Request/Response), Config y Exception.
+Cada microservicio de negocio sigue la misma estructura interna: `Controller`, `Service`, `Repository`, `Model`, `dto` (Request/Response), `Config`, `Exception` y `Client` (cuando consume a otro microservicio). También incluyen su propia clase de **tests unitarios** (`src/test/java/.../*ApplicationTests.java`) con JUnit 5 + Mockito.
 
 ---
 
 ## Requisitos
 
-- Java 17+
-- Maven 3.8+
+- Java 21+
+- Maven 3.9+
 - MySQL 8+
-- Cada servicio necesita su propia base de datos creada antes de arrancar
+- Cada servicio de negocio necesita su propia base de datos creada antes de arrancar
 
 ---
 
@@ -50,18 +52,138 @@ CREATE DATABASE db_notifications;
 CREATE DATABASE db_promotions;
 ```
 
-Las credenciales por defecto en todos los `application.properties` son `root` / `123456`. Cambiarlo antes de usar en cualquier entorno que no sea local.
+Las credenciales por defecto en todos los `application-dev.yml` son `root` / `123456`. Cambiarlas antes de usar en cualquier entorno que no sea local.
 
 ---
 
-## Levantar un servicio
+## Configuración (YAML)
+
+Cada microservicio tiene dos (o tres) archivos de configuración:
+
+- `application.yml` — define el nombre de la app y el perfil activo (`spring.profiles.active: dev`).
+- `application-dev.yml` — configuración real de entorno local: puerto, datasource, JPA, JWT, Eureka y logging.
+- `application-docker.yml` *(solo `auth-service`, como ejemplo)* — misma configuración pero leyendo valores desde variables de entorno del contenedor (`${VARIABLE:valor-por-defecto}`), pensado para `docker-compose`.
+
+`api-gateway` y `eureka-server` solo tienen un `application.yml`, ya que no manejan perfiles ni base de datos.
+
+---
+
+## Orden recomendado de arranque
+
+El Gateway y los microservicios dependen de que **Eureka** esté disponible para registrarse y descubrirse entre sí. El orden correcto es:
+
+1. **eureka-server** (`8761`) — esperar a que termine de levantar.
+2. **Todos los microservicios de negocio** (`UserService`, `auth-service`, `Expense_Service`, etc.) — cada uno se registra en Eureka al iniciar.
+3. Esperar ~10-15 segundos para que el registro/lease en Eureka se propague.
+4. **api-gateway** (`8090`) — al iniciar, descarga el registro de Eureka y puede resolver `lb://NOMBRE-SERVICE` hacia cada microservicio.
+
+Puedes confirmar que todo esté registrado entrando a `http://localhost:8761` en el navegador: ahí debes ver cada servicio listado como instancia `UP`.
 
 ```bash
 cd <nombre-del-servicio>
 mvn spring-boot:run
 ```
 
-O ejecutar directamente el `.jar` que ya viene compilado en cada carpeta `target/`.
+O ejecutar directamente el `.jar` ya compilado en la carpeta `target/` de cada servicio.
+
+---
+
+## API Gateway
+
+Todo el tráfico externo (Postman, frontend, etc.) debería entrar por el Gateway en vez de pegarle directo a cada microservicio:
+
+```
+http://localhost:8090
+```
+
+El Gateway enruta por *path*, resolviendo el destino real vía Eureka (`lb://NOMBRE-SERVICE`):
+
+| Ruta en el Gateway | Servicio destino |
+|---|---|
+| `/api/v1/users/**` | UserService (8080) |
+| `/api/v1/auth/**` | auth-service (8081) |
+| `/api/v1/expenses/**` | Expense_Service (8082) |
+| `/api/v1/incomes/**` | Income_Service (8083) |
+| `/api/v1/budgets/**` | Budget_Service (8084) |
+| `/api/v1/categories/**` | Category_Service (8085) |
+| `/api/v1/analytics/**` | Analytics_Service (8086) |
+| `/api/v1/alerts/**` | Alert_Service (8087) |
+| `/api/v1/notifications/**` | Notification_Service (8088) |
+| `/api/v1/promotions/**` | Promotion_Service (8089) |
+
+> El Gateway solo reenvía las rutas `/api/v1/**`. La documentación Swagger de cada servicio **no** pasa por el Gateway; hay que acceder a ella directo en el puerto de cada microservicio (ver siguiente sección).
+
+---
+
+## Documentación Swagger por servicio
+
+Todos los microservicios de negocio incluyen `springdoc-openapi`. Se accede directo al puerto de cada uno (sin pasar por el Gateway):
+
+| Servicio | Swagger UI |
+|---|---|
+| UserService | http://localhost:8080/swagger-ui/index.html |
+| auth-service | http://localhost:8081/swagger-ui/index.html |
+| Expense_Service | http://localhost:8082/swagger-ui/index.html |
+| Income_Service | http://localhost:8083/swagger-ui/index.html |
+| Budget_Service | http://localhost:8084/swagger-ui/index.html |
+| Category_Service | http://localhost:8085/swagger-ui/index.html |
+| Analytics_Service | http://localhost:8086/swagger-ui/index.html |
+| Alert_Service | http://localhost:8087/swagger-ui/index.html |
+| Notification_Service | http://localhost:8088/swagger-ui/index.html |
+| Promotion_Service | http://localhost:8089/swagger-ui/index.html |
+
+El JSON de cada definición OpenAPI está en `/v3/api-docs` del puerto correspondiente.
+
+---
+
+## Flujo de prueba end-to-end (Postman)
+
+Usando el Gateway (`http://localhost:8090`) como base de todas las requests:
+
+**1. Crear usuario** — `POST /api/v1/users`
+```json
+{
+  "nombre": "Juan Perez",
+  "email": "juan.perez@cashin.cl",
+  "password": "clave123",
+  "telefono": "987654321",
+  "presupuestoMensual": 500000
+}
+```
+
+**2. Login** — `POST /api/v1/auth/login`
+```json
+{
+  "username": "juan.perez@cashin.cl",
+  "password": "clave123"
+}
+```
+Devuelve `{ "token": "...", "username": "...", "expiresAt": "..." }`.
+
+**3. Obtener el mismo usuario** — `GET /api/v1/users/{idUser}` (o `GET /api/v1/users/email/juan.perez@cashin.cl`)
+
+> `UserService` y `auth-service` no tienen filtro JWT propio, así que estos tres pasos funcionan sin enviar el header `Authorization`. Para los demás servicios (gastos, ingresos, presupuestos, alertas, etc.) sí hay que enviar `Authorization: Bearer {token}` obtenido en el paso 2.
+
+---
+
+## Tests unitarios
+
+Cada microservicio de negocio (excepto `api-gateway` y `eureka-server`, que no tienen lógica propia que probar) tiene una clase de test en `src/test/java/.../*ApplicationTests.java` con:
+
+- **JUnit 5** (`@Test`, `@DisplayName`, `@BeforeEach`)
+- **Mockito** (`@Mock`, `@InjectMocks`, `@ExtendWith(MockitoExtension.class)`) para simular `Repository` y los `Client` de otros servicios sin necesidad de levantar base de datos ni el resto del ecosistema.
+- **AssertJ** (`assertThat`, `assertThatThrownBy`) para las aserciones.
+
+Cubren la capa de `Service`: creación, validaciones de negocio (duplicados, estados, umbrales), búsquedas, actualizaciones y eliminación, incluyendo los casos de error (`ResourceNotFoundException`, `RuntimeException`).
+
+### Cómo correrlos
+
+```bash
+cd <nombre-del-servicio>
+mvn test
+```
+
+O desde el IDE: panel **Testing** → ícono ▶ sobre el servicio o sobre un test individual.
 
 ---
 
@@ -69,13 +191,29 @@ O ejecutar directamente el `.jar` que ya viene compilado en cada carpeta `target
 
 ---
 
--- UserService
+-- **eureka-server**
+
+Puerto: `8761`
+
+Servidor de registro y descubrimiento de servicios (Netflix Eureka). Todos los microservicios se registran aquí al arrancar; el Gateway lo consulta para resolver `lb://NOMBRE-SERVICE` a una instancia real. Expone un dashboard web en `http://localhost:8761` donde se puede ver qué servicios están `UP`.
+
+---
+
+-- **api-gateway**
+
+Puerto: `8090`
+
+Punto de entrada único del sistema. Enruta las peticiones externas hacia el microservicio correspondiente según el path (`/api/v1/<recurso>/**`), resolviendo el destino vía Eureka. Incluye un filtro de logging simple que imprime método y ruta de cada petición que pasa por el Gateway.
+
+---
+
+-- **UserService**
 
 Puerto: `8080` | Base de datos: `db_users`
 
 Es el servicio base del sistema. Gestiona el registro y la información de los usuarios. No tiene JWT filter propio porque los otros servicios lo consultan internamente para validar a quién pertenece un token.
 
-Entidad principal: `User` — guarda nombre, email, passwordHash, teléfono, fecha de registro, estado activo y presupuesto mensual.
+Entidad principal: `User` — guarda nombre, email, password, teléfono, fecha de registro, estado activo y presupuesto mensual.
 
 Endpoints principales (`/api/v1/users`):
 
@@ -86,15 +224,15 @@ Endpoints principales (`/api/v1/users`):
 - `PUT /{id}` — actualizar
 - `DELETE /{id}` — eliminar
 
-También expone `/internal/email/{email}` para que otros servicios obtengan el modelo completo del usuario (incluyendo el hash de contraseña).
+También expone `/internal/email/{email}` para que otros servicios obtengan el modelo completo del usuario (uso interno entre microservicios, por ejemplo `auth-service`).
 
 ---
 
--- auth-service
+-- **auth-service**
 
 Puerto: `8081` | Base de datos: `db_auth`
 
-Maneja el login y la generación de tokens JWT. Cuando un usuario hace login, este servicio consulta al UserService para verificar el email, compara el hash de la contraseña, genera un JWT y lo persiste en la tabla `AuthToken`.
+Maneja el login y la generación de tokens JWT. Cuando un usuario hace login, este servicio consulta al UserService para verificar el email y la contraseña, genera un JWT y lo persiste en la tabla `AuthToken`.
 
 Entidad principal: `AuthToken` — guarda el username, el token generado, la fecha de emisión, la fecha de expiración y si está activo.
 
@@ -110,7 +248,7 @@ Endpoints (`/api/v1/auth`):
 
 ---
 
--- Expense_Service
+-- **Expense_Service**
 
 Puerto: `8082` | Base de datos: `db_expenses`
 
@@ -129,7 +267,7 @@ Endpoints (`/api/v1/expenses`):
 
 ---
 
--- Income_Service
+-- **Income_Service**
 
 Puerto: `8083` | Base de datos: `db_incomes`
 
@@ -148,7 +286,7 @@ Endpoints (`/api/v1/incomes`):
 
 ---
 
--- Budget_Service
+-- **Budget_Service**
 
 Puerto: `8084` | Base de datos: `db_budgets`
 
@@ -167,7 +305,7 @@ Endpoints (`/api/v1/budgets`):
 
 ---
 
--- Category_Service
+-- **Category_Service**
 
 Puerto: `8085` | Base de datos: `db_categories`
 
@@ -187,7 +325,7 @@ Endpoints (`/api/v1/categories`):
 
 ---
 
--- Analytics_Service
+-- **Analytics_Service**
 
 Puerto: `8086` | Base de datos: `db_analytics`
 
@@ -205,7 +343,7 @@ Endpoints (`/api/v1/analytics`):
 
 ---
 
--- Alert_Service
+-- **Alert_Service**
 
 Puerto: `8087` | Base de datos: `db_alerts`
 
@@ -225,7 +363,7 @@ Endpoints (`/api/v1/alerts`):
 
 ---
 
--- Notification_Service
+-- **Notification_Service**
 
 Puerto: `8088` | Base de datos: `db_notifications`
 
@@ -249,7 +387,7 @@ Endpoints (`/api/v1/notifications`):
 
 ---
 
--- Promotion_Service
+-- **Promotion_Service**
 
 Puerto: `8089` | Base de datos: `db_promotions`
 
@@ -274,7 +412,9 @@ Endpoints (`/api/v1/promotions`):
 
 ## Notas
 
-- El JWT secret está hardcodeado en los `application.properties` como `clave-super-secreta-para-clase-123456`. Esto es solo para el entorno de desarrollo y no debería usarse en producción.
-- Todos los servicios usan `spring.jpa.hibernate.ddl-auto=update`, lo que significa que Hibernate crea o actualiza las tablas automáticamente al arrancar.
-- Flyway está desactivado en todos los servicios.
+- El JWT secret está hardcodeado en los `application-dev.yml` como `clave-super-secreta-para-clase-123456`. Esto es solo para el entorno de desarrollo y no debería usarse en producción.
+- Todos los servicios usan `spring.jpa.hibernate.ddl-auto: update` en perfil `dev`, lo que significa que Hibernate crea o actualiza las tablas automáticamente al arrancar. En el perfil `docker` de `auth-service` se usa `validate` porque las tablas las crea Flyway.
+- Flyway está desactivado en perfil `dev` en todos los servicios; en `auth-service` perfil `docker` está activo y corre las migraciones de `classpath:db/migration`.
 - La comunicación entre servicios usa Spring WebClient de forma reactiva.
+- El JWT solo protege las rutas `/api/v1/**` de cada microservicio que tiene `JwtFilter` configurado; los endpoints de Swagger (`/swagger-ui/**`, `/v3/api-docs/**`) quedan siempre abiertos.
+- `UserService` y `auth-service` no validan JWT en sus propios endpoints (son el punto de entrada de autenticación), por eso se puede crear un usuario y loguearse sin necesidad de un token previo.

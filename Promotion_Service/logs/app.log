@@ -1,0 +1,46 @@
+2026-06-17 22:52:26 [restartedMain] INFO  c.d.c.P.PromotionServiceApplication - Starting PromotionServiceApplication using Java 21.0.10 with PID 25348 (C:\Users\Safagod\Downloads\eee\Cash-In-master\Promotion_Service\target\classes started by Safagod in C:\Users\Safagod\Downloads\eee\Cash-In-master\Promotion_Service)
+2026-06-17 22:52:26 [restartedMain] INFO  c.d.c.P.PromotionServiceApplication - No active profile set, falling back to 1 default profile: "default"
+2026-06-17 22:52:27 [restartedMain] INFO  o.s.b.d.e.DevToolsPropertyDefaultsPostProcessor - Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+2026-06-17 22:52:27 [restartedMain] INFO  o.s.b.d.e.DevToolsPropertyDefaultsPostProcessor - For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
+2026-06-17 22:52:27 [background-preinit] INFO  o.h.validator.internal.util.Version - HV000001: Hibernate Validator 9.0.1.Final
+2026-06-17 22:52:27 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-06-17 22:52:28 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 185 ms. Found 1 JPA repository interface.
+2026-06-17 22:52:28 [restartedMain] INFO  o.s.boot.tomcat.TomcatWebServer - Tomcat initialized with port 8089 (http)
+2026-06-17 22:52:28 [restartedMain] INFO  o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8089"]
+2026-06-17 22:52:28 [restartedMain] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2026-06-17 22:52:28 [restartedMain] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/11.0.21]
+2026-06-17 22:52:29 [restartedMain] INFO  o.s.b.w.c.s.WebApplicationContextInitializer - Root WebApplicationContext: initialization completed in 2070 ms
+2026-06-17 22:52:29 [restartedMain] INFO  org.hibernate.orm.jpa - HHH008540: Processing PersistenceUnitInfo [name: default]
+2026-06-17 22:52:29 [restartedMain] INFO  org.hibernate.orm.core - HHH000001: Hibernate ORM core version 7.2.12.Final
+2026-06-17 22:52:29 [restartedMain] INFO  o.s.o.j.p.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-06-17 22:52:30 [restartedMain] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2026-06-17 22:52:30 [restartedMain] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@3ffee4e8
+2026-06-17 22:52:30 [restartedMain] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2026-06-17 22:52:30 [restartedMain] WARN  org.hibernate.orm.deprecation - HHH90000025: MySQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2026-06-17 22:52:30 [restartedMain] INFO  o.hibernate.orm.connections.pooling - HHH10001005: Database info:
+	Database JDBC URL [jdbc:mysql://localhost:3306/db_promotions]
+	Database driver: MySQL Connector/J
+	Database dialect: MySQLDialect
+	Database version: 8.0.46
+	Default catalog/schema: db_promotions/undefined
+	Autocommit mode: undefined/unknown
+	Isolation level: REPEATABLE_READ [default REPEATABLE_READ]
+	JDBC fetch size: none
+	Pool: DataSourceConnectionProvider
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2026-06-17 22:52:31 [restartedMain] INFO  org.hibernate.orm.core - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-06-17 22:52:31 [restartedMain] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-06-17 22:52:31 [restartedMain] INFO  o.s.d.j.r.q.QueryEnhancerFactories - Hibernate is in classpath; If applicable, HQL parser will be used.
+2026-06-17 22:52:32 [restartedMain] WARN  o.s.b.j.a.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2026-06-17 22:52:32 [restartedMain] INFO  o.a.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8089"]
+2026-06-17 22:52:32 [restartedMain] INFO  o.s.boot.tomcat.TomcatWebServer - Tomcat started on port 8089 (http) with context path '/'
+2026-06-17 22:52:32 [restartedMain] INFO  c.d.c.P.PromotionServiceApplication - Started PromotionServiceApplication in 6.308 seconds (process running for 6.878)
+2026-06-17 23:05:51 [http-nio-8089-exec-2] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2026-06-17 23:05:51 [http-nio-8089-exec-2] INFO  o.s.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+2026-06-17 23:05:51 [http-nio-8089-exec-2] INFO  o.s.web.servlet.DispatcherServlet - Completed initialization in 0 ms
+2026-06-17 23:05:52 [http-nio-8089-exec-2] WARN  c.d.c.P.E.GlobalExceptionHandler - Error de validación: [Field error in object 'promotionRequest' on field 'fechaFin': rejected value [null]; codes [NotNull.promotionRequest.fechaFin,NotNull.fechaFin,NotNull.java.time.LocalDate,NotNull]; arguments [org.springframework.context.support.DefaultMessageSourceResolvable: codes [promotionRequest.fechaFin,fechaFin]; arguments []; default message [fechaFin]]; default message [LA FECHA DE FIN ES OBLIGATORIA], Field error in object 'promotionRequest' on field 'fechaInicio': rejected value [null]; codes [NotNull.promotionRequest.fechaInicio,NotNull.fechaInicio,NotNull.java.time.LocalDate,NotNull]; arguments [org.springframework.context.support.DefaultMessageSourceResolvable: codes [promotionRequest.fechaInicio,fechaInicio]; arguments []; default message [fechaInicio]]; default message [LA FECHA DE INICIO ES OBLIGATORIA]]
+2026-06-17 23:05:52 [http-nio-8089-exec-2] WARN  o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver - Resolved [org.springframework.web.bind.MethodArgumentNotValidException: Validation failed for argument [1] in public org.springframework.http.ResponseEntity<cl.duoc.cashin.PromotionService.dto.Response.PromotionResponse> cl.duoc.cashin.PromotionService.Controller.PromotionController.crear(java.lang.String,cl.duoc.cashin.PromotionService.dto.Request.PromotionRequest) with 2 errors: [Field error in object 'promotionRequest' on field 'fechaFin': rejected value [null]; codes [NotNull.promotionRequest.fechaFin,NotNull.fechaFin,NotNull.java.time.LocalDate,NotNull]; arguments [org.springframework.context.support.DefaultMessageSourceResolvable: codes [promotionRequest.fechaFin,fechaFin]; arguments []; default message [fechaFin]]; default message [LA FECHA DE FIN ES OBLIGATORIA]] [Field error in object 'promotionRequest' on field 'fechaInicio': rejected value [null]; codes [NotNull.promotionRequest.fechaInicio,NotNull.fechaInicio,NotNull.java.time.LocalDate,NotNull]; arguments [org.springframework.context.support.DefaultMessageSourceResolvable: codes [promotionRequest.fechaInicio,fechaInicio]; arguments []; default message [fechaInicio]]; default message [LA FECHA DE INICIO ES OBLIGATORIA]] ]
+2026-06-17 23:06:24 [http-nio-8089-exec-4] INFO  c.d.c.P.Service.PromotionService - Creando promocion con codigo: DESC20
+2026-06-17 23:06:24 [http-nio-8089-exec-4] INFO  c.d.c.P.Service.PromotionService - Categoria id: 1 (Alimentacion) validada en category-service
+2026-06-17 23:06:24 [http-nio-8089-exec-4] INFO  c.d.c.P.Service.PromotionService - Promocion creada con id: 2 — codigo: DESC20 — tipo: PORCENTAJE
